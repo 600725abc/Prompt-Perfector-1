@@ -1,0 +1,558 @@
+<html><head><base href="https://aiartgallery.patricialiu.com/" /><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI Art Prompt Alchemist</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+  --primary-color: #BB86FC;
+  --secondary-color: #03DAC6;
+  --background-color: #121212;
+  --surface-color: #1E1E1E;
+  --text-color: #E0E0E0;
+  --accent-color: #CF6679;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 900px;
+  padding: 2em;
+  background-color: var(--surface-color);
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  margin: 2em auto;
+  flex-grow: 1;
+}
+
+h1, h2 {
+  color: var(--primary-color);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+h1 {
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+h1::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff, #00ffff);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: neon 5s linear infinite;
+}
+
+@keyframes neon {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+h2 {
+  font-size: 1.8em;
+  margin-top: 1.5em;
+}
+
+textarea {
+  width: 100%;
+  height: 120px;
+  margin-bottom: 1em;
+  padding: 0.8em;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border: 2px solid var(--secondary-color);
+  border-radius: 8px;
+  font-size: 16px;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 10px rgba(207, 102, 121, 0.5);
+}
+
+button {
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+  border: none;
+  padding: 0.8em 1.5em;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  display: block;
+  margin: 30px auto;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+button:hover {
+  background-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(207, 102, 121, 0.5);
+}
+
+#output-container {
+  position: relative;
+}
+
+#output {
+  background-color: var(--background-color);
+  padding: 1.5em;
+  border-radius: 8px;
+  margin-top: 1.5em;
+  white-space: pre-wrap;
+  font-size: 16px;
+  line-height: 1.8;
+  border-left: 5px solid var(--accent-color);
+}
+
+.slider-container {
+  margin-bottom: 1.5em;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--background-color);
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--secondary-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  background: var(--accent-color);
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--secondary-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  background: var(--accent-color);
+}
+
+label {
+  display: block;
+  margin-bottom: 0.8em;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.slider-value {
+  display: inline-block;
+  width: 40px;
+  text-align: right;
+  margin-left: 10px;
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.style-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 1.5em;
+}
+
+.style-option {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border: 2px solid var(--secondary-color);
+  border-radius: 30px;
+  padding: 0.6em 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-weight: 500;
+}
+
+.style-option:hover {
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+  transform: translateY(-2px);
+}
+
+.style-option.selected {
+  background-color: var(--accent-color);
+  color: var(--background-color);
+  border-color: var(--accent-color);
+  transform: scale(1.05);
+}
+
+.inspiration {
+  text-align: center;
+  margin-top: 2em;
+  font-style: italic;
+  color: var(--secondary-color);
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: linear-gradient(-45deg, #BB86FC, #3700B3, #03DAC6, #CF6679);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  opacity: 0.15;
+}
+
+.container {
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+textarea, #output {
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+button {
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.style-option {
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+h2 {
+  text-shadow: 0 0 10px rgba(187, 134, 252, 0.5);
+}
+
+button, .style-option:hover, .style-option.selected {
+  box-shadow: 0 0 15px rgba(3, 218, 198, 0.5);
+}
+
+textarea, button, .style-option {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+textarea:hover, button:hover, .style-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(3, 218, 198, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(3, 218, 198, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(3, 218, 198, 0);
+  }
+}
+
+button {
+  animation: pulse 2s infinite;
+}
+
+#copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#copy-btn:hover {
+  background-color: var(--accent-color);
+  transform: scale(1.1);
+}
+
+#copy-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+#copy-btn::after {
+  content: "Copy";
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#copy-btn:hover::after {
+  opacity: 1;
+}
+
+footer {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  text-align: center;
+  padding: 1em;
+  margin-top: 2em;
+  font-size: 0.9em;
+  border-top: 1px solid var(--primary-color);
+}
+
+.creator-message {
+  max-width: 600px;
+  margin: 0 auto;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1 data-text="AI Art Prompt Alchemist">AI Art Prompt Alchemist</h1>
+    <p class="inspiration">"Where imagination meets artificial intelligence to create visual masterpieces."</p>
+    
+    <textarea id="inputPrompt" placeholder="Describe your creative vision here..."></textarea>
+    
+    <div class="style-selector">
+      <div class="style-option" onclick="toggleStyle(this)">Realistic</div>
+      <div class="style-option" onclick="toggleStyle(this)">Cartoon</div>
+      <div class="style-option" onclick="toggleStyle(this)">Abstract</div>
+      <div class="style-option" onclick="toggleStyle(this)">Watercolor</div>
+      <div class="style-option" onclick="toggleStyle(this)">Oil painting</div>
+      <div class="style-option" onclick="toggleStyle(this)">Digital art</div>
+      <div class="style-option" onclick="toggleStyle(this)">Sketch</div>
+      <div class="style-option" onclick="toggleStyle(this)">Photorealistic</div>
+      <div class="style-option" onclick="toggleStyle(this)">Pop art</div>
+      <div class="style-option" onclick="toggleStyle(this)">Surrealism</div>
+      <div class="style-option" onclick="toggleStyle(this)">Impressionism</div>
+      <div class="style-option" onclick="toggleStyle(this)">Cubism</div>
+      <div class="style-option" onclick="toggleStyle(this)">Art Nouveau</div>
+      <div class="style-option" onclick="toggleStyle(this)">Pixel art</div>
+      <div class="style-option" onclick="toggleStyle(this)">Minimalism</div>
+      <div class="style-option" onclick="toggleStyle(this)">Steampunk</div>
+    </div>
+    
+    <div class="slider-container">
+      <label for="detailLevel">Level of Detail: <span id="detailValue" class="slider-value">5</span></label>
+      <input type="range" min="1" max="10" value="5" class="slider" id="detailLevel" oninput="updateSliderValue('detailLevel', 'detailValue')">
+    </div>
+    
+    <div class="slider-container">
+      <label for="creativityLevel">Level of Creativity: <span id="creativityValue" class="slider-value">5</span></label>
+      <input type="range" min="1" max="10" value="5" class="slider" id="creativityLevel" oninput="updateSliderValue('creativityLevel', 'creativityValue')">
+    </div>
+    
+    <button onclick="refinePrompt()">Transform My Prompt</button>
+    
+    <h2>Refined Image Description:</h2>
+    <div id="output-container">
+      <div id="output"></div>
+      <button id="copy-btn" onclick="copyToClipboard()" aria-label="Copy to clipboard">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="creator-message">
+      我是創作者Patricia Liu，生活在這樣一個充滿驚奇的年代，感到很幸運而開心。幾乎每天都能有新的學習，這樣豐盛的充實感，來自AI新紀元。
+    </div>
+  </footer>
+
+  <script>
+    let selectedStyles = [];
+
+    function toggleStyle(element) {
+      element.classList.toggle('selected');
+      const style = element.textContent;
+      if (selectedStyles.includes(style)) {
+        selectedStyles = selectedStyles.filter(s => s !== style);
+      } else {
+        selectedStyles.push(style);
+      }
+    }
+
+    function updateSliderValue(sliderId, valueId) {
+      const slider = document.getElementById(sliderId);
+      const value = document.getElementById(valueId);
+      value.textContent = slider.value;
+    }
+
+    function refinePrompt() {
+      const inputPrompt = document.getElementById('inputPrompt').value;
+      const detailLevel = parseInt(document.getElementById('detailLevel').value);
+      const creativityLevel = parseInt(document.getElementById('creativityLevel').value);
+      const output = document.getElementById('output');
+      
+      let refinedPrompt = perfectPrompt(inputPrompt, detailLevel, creativityLevel);
+      
+      output.textContent = refinedPrompt;
+    }
+
+    function perfectPrompt(prompt, detailLevel, creativityLevel) {
+      const imageTypes = [
+        "portrait", "landscape", "still life", "action shot", "close-up",
+        "aerial view", "panorama", "concept art", "character design", "matte painting"
+      ];
+      
+      const environments = [
+        "urban cityscape", "lush forest", "serene beach", "mountain range", "futuristic metropolis",
+        "abandoned ruins", "underwater scene", "desert oasis", "space station", "magical realm"
+      ];
+      
+      const actions = [
+        "exploring", "contemplating", "celebrating", "battling", "creating",
+        "transforming", "discovering", "evolving", "connecting", "transcending"
+      ];
+      
+      let refinedPrompt = prompt.trim() + ", ";
+      
+      // Add image type
+      refinedPrompt += `${imageTypes[Math.floor(Math.random() * imageTypes.length)]}, `;
+      
+      // Add environment if not specified
+      if (!prompt.toLowerCase().includes("in a") && !prompt.toLowerCase().includes("at a")) {
+        refinedPrompt += `in a ${environments[Math.floor(Math.random() * environments.length)]}, `;
+      }
+      
+      // Add action if not specified
+      if (!prompt.toLowerCase().includes("ing ")) {
+        refinedPrompt += `${actions[Math.floor(Math.random() * actions.length)]}, `;
+      }
+      
+      // Incorporate selected styles
+      if (selectedStyles.length > 0) {
+        refinedPrompt += `${selectedStyles.join(' and ')} style, `;
+      }
+      
+      // Add detail level description
+      if (detailLevel <= 3) {
+        refinedPrompt += "minimalistic with key elements highlighted, ";
+      } else if (detailLevel <= 7) {
+        refinedPrompt += "balanced level of detail, focus on important features, ";
+      } else {
+        refinedPrompt += "intricate details, complex textures and patterns, ";
+      }
+      
+      // Add creativity level description
+      if (creativityLevel <= 3) {
+        refinedPrompt += "traditional interpretation, ";
+      } else if (creativityLevel <= 7) {
+        refinedPrompt += "creative twist on conventional ideas, ";
+      } else {
+        refinedPrompt += "highly imaginative and unexpected elements, ";
+      }
+      
+      // Add technical specifications based on detail and creativity
+      refinedPrompt += `high resolution, professional quality, detail level: ${detailLevel}/10, creativity level: ${creativityLevel}/10`;
+      
+      return refinedPrompt;
+    }
+
+    function copyToClipboard() {
+      const output = document.getElementById('output');
+      const textArea = document.createElement('textarea');
+      textArea.value = output.textContent;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      // Visual feedback
+      const copyBtn = document.getElementById('copy-btn');
+      copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+      copyBtn.setAttribute('aria-label', 'Copied!');
+      setTimeout(() => {
+        copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+        copyBtn.setAttribute('aria-label', 'Copy to clipboard');
+      }, 2000);
+    }
+
+    // Initialize slider values
+    updateSliderValue('detailLevel', 'detailValue');
+    updateSliderValue('creativityLevel', 'creativityValue');
+  </script>
+</body></html>
